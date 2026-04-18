@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест уведомлений</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .box {
+            background: white;
+            border-radius: 30px;
+            padding: 40px 25px;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 { font-size: 3rem; margin: 0 0 10px; }
+        p { color: #666; margin-bottom: 30px; }
+        button {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            background: #667eea;
+            color: white;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        button:active { background: #5a67d8; }
+        button:disabled { opacity: 0.5; }
+        #status {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>🔔</h1>
+        <p>CodePen — работает!</p>
+        <div id="status">Статус: проверяем...</div>
+        <button onclick="askPermission()">🔔 Запросить разрешение</button>
+        <button id="sendBtn" onclick="sendNotification()" disabled>✉️ Отправить Привет😄!</button>
+    </div>
+    <script>
+        const statusDiv = document.getElementById('status');
+        const sendBtn = document.getElementById('sendBtn');
+        
+        function checkPermission() {
+            if (!('Notification' in window)) {
+                statusDiv.innerText = 'Статус: ❌ Нет поддержки';
+                return;
+            }
+            if (Notification.permission === 'granted') {
+                statusDiv.innerText = 'Статус: ✅ Разрешено!';
+                sendBtn.disabled = false;
+            } else if (Notification.permission === 'denied') {
+                statusDiv.innerText = 'Статус: ❌ Запрещено';
+            } else {
+                statusDiv.innerText = 'Статус: ⏳ Нужно разрешение';
+            }
+        }
+        
+        async function askPermission() {
+            const result = await Notification.requestPermission();
+            checkPermission();
+            if (result === 'granted') {
+                new Notification('✅ Успех!', { body: 'Уведомления работают!', icon: '🎉' });
+            }
+        }
+        
+        function sendNotification() {
+            if (Notification.permission === 'granted') {
+                new Notification('Привет😄!', { body: 'CodePen — всё работает! 🎉', icon: '😊' });
+            }
+        }
+        
+        checkPermission();
+    </script>
+</body>
+</html>
